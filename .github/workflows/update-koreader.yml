@@ -25,7 +25,7 @@ jobs:
           gh api "repos/koreader/koreader/actions/artifacts/$ARTIFACT_ID/zip" > "$FILENAME"
       - name: Release
         run: |
-          gh release create "$VERSION" "$FILENAME" --title "KOReader $VERSION" --notes "From https://github.com/koreader/koreader/actions/artifacts/$ARTIFACT_ID"
+          gh release create "$VERSION" "$FILENAME" --title "KOReader $VERSION" --notes "From https://github.com/koreader/koreader with artifact-id $ARTIFACT_ID"
       - name: Write
         run: |
           HASH="sha256-$(openssl dgst -sha256 -binary "$FILENAME" | base64 -w0)"

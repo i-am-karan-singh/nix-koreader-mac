@@ -4,12 +4,12 @@ Nix flake for [KOReader](https://koreader.rocks) on macOS, a cross-platform read
 
 Add to your home-manager/nix-darwin config like so:
 ```nix
-inputs.gtimelog-mac = {
+inputs.koreader-mac = {
 	url = "github:i-am-karan-singh/nix-koreader-mac";
 	inputs.nixpkgs.follows = "nixpkgs";
 };
 # OR for flakehub
-inputs.gtimelog-mac = {
+inputs.koreader-mac = {
 	url = "https://flakehub.com/f/karan/nix-koreader-mac/0.1";
 	inputs.nixpkgs.follows = "nixpkgs";
 };
