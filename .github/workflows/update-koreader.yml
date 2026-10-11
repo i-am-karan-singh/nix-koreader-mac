@@ -1,0 +1,45 @@
+name: Update KOReader
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_id:
+        description: "Artifact Id"
+        required: true
+      version:
+        description: "KOReader version"
+        required: true
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ARTIFACT_ID: ${{ inputs.artifact_id }}
+      VERSION: ${{ inputs.version }}
+      FILENAME: koreader-${{ inputs.version }}.7z
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        run: |
+          gh api "repos/koreader/koreader/actions/artifacts/$ARTIFACT_ID/zip" > "$FILENAME"
+      - name: Release
+        run: |
+          gh release create "$VERSION" "$FILENAME" --title "KOReader $VERSION" --notes "From https://github.com/koreader/koreader/actions/artifacts/$ARTIFACT_ID"
+      - name: Write
+        run: |
+          HASH="sha256-$(openssl dgst -sha256 -binary "$FILENAME" | base64 -w0)"
+          cat > source.nix <<EOF
+          {
+            version = "$VERSION";
+            url = "https://github.com/$GITHUB_REPOSITORY/releases/download/$VERSION/$FILENAME";
+            hash = "$HASH";
+          }
+          EOF
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source.nix
+          git commit -m "[bot]: Update KOReader to $VERSION"
+          git push
